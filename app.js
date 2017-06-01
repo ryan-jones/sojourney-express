@@ -9,6 +9,7 @@ var countriesApi = require('./routes/countries-api');
 var usersApi = require('./routes/users-api');
 var cors = require('cors');
 var authRoutes = require('./routes/auth-routes');
+var itinerariesApi = require('./routes/itinerary-api');
 const session    = require('express-session');
 const passport   = require('passport');
 const mongoose = require('mongoose');
@@ -41,6 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', authRoutes)
 app.use('/api', countriesApi);
 app.use('/api', usersApi);
+app.use('/api', itinerariesApi);
 
 
 

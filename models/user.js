@@ -9,10 +9,7 @@ const userSchema = new Schema({
     type: Array,
     default: []
   },
-  itineraries: {
-    type: Array,
-    default: []
-  },
+  itineraries: [{ type: Schema.Types.ObjectId, ref: 'Itinerary' }],
   nationality: String,
   nationality2: String,
 });
