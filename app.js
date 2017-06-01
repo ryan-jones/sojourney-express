@@ -13,10 +13,14 @@ var itinerariesApi = require('./routes/itinerary-api');
 const session    = require('express-session');
 const passport   = require('passport');
 const mongoose = require('mongoose');
+const dotenv = require("dotenv");
+
 
 require('./config/database');
 var app = express();
 
+dotenv.config();
+dotenv.load();
 
 var corsOptions = {credentials: true, origin: 'http://localhost:4200'};
 // view engine setup
