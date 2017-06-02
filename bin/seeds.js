@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Country = require('../models/country');
 
-mongoose.connect("mongodb://localhost:27017/country-list");
+mongoose.connect(process.env.MONGODB_URI);
 
 let countries = [
   {
