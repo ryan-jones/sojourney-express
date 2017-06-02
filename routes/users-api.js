@@ -74,7 +74,15 @@ router.post('/users', (req, res, next) => {
 });
 
 
-
+router.delete('/users/:id/delete', ((req, res, next) => {
+		User.remove({ _id: req.user._id }, function(err, user) {
+	    if (err) {
+	    	next(err)
+	    } else {
+	    	res.json(user);
+	    }
+    });
+	}));
 
 
 module.exports = router;
