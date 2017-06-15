@@ -73,7 +73,7 @@ router.post('/users/:id', (req, res, next)=>{
         });
       }
 
-  }
+  });
 })
 /* CREATE a new user visa schedule. */
 router.post('/users', (req, res, next) => {
