@@ -70,7 +70,7 @@ router.post('/users/:id', (req, res, next)=>{
 		  		} else {
             res.json(user);
           }
-        }
+        });
       }
 
   }
