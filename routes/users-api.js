@@ -59,11 +59,11 @@ router.post('/users/:id', (req, res, next)=>{
     if (err) {
 				next(err);
 			} else {
-        user.name: req.body.name,
-        user.username: req.body.username,
-        user.password: hashPass,
-        user.nationality1: req.body.nationality1,
-        user.nationality2: req.body.nationality2,
+        user.name = req.body.name,
+        user.username = req.body.username,
+        user.password = hashPass,
+        user.nationality1 = req.body.nationality1,
+        user.nationality2 = req.body.nationality2,
         user.save((err) => {
 		  		if (err) {
 		  			next(err);
