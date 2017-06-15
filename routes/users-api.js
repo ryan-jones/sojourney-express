@@ -49,6 +49,32 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
+router.post('/users/:id', (req, res, next)=>{
+  let password = req.body.password;
+  console.log('password', password);
+  let salt     = bcrypt.genSaltSync(bcryptSalt);
+  let hashPass = bcrypt.hashSync(password, salt);
+
+  User.findById({_id: req.params.id}, (err, user)=>{
+    if (err) {
+				next(err);
+			} else {
+        user.name: req.body.name,
+        user.username: req.body.username,
+        user.password: hashPass,
+        user.nationality1: req.body.nationality1,
+        user.nationality2: req.body.nationality2,
+        user.save((err) => {
+		  		if (err) {
+		  			next(err);
+		  		} else {
+            res.json(user);
+          }
+        }
+      }
+
+  }
+})
 /* CREATE a new user visa schedule. */
 router.post('/users', (req, res, next) => {
 
@@ -74,6 +100,7 @@ router.post('/users', (req, res, next) => {
 });
 
 
+//deletes user from the database
 router.delete('/users/:id/delete', ((req, res, next) => {
 		User.remove({ _id: req.user._id }, function(err, user) {
 	    if (err) {

@@ -45,16 +45,6 @@ router.post('/itinerary', (req, res, next) => {
 });
 
 
-        //
-        // User
-        //  .find({_id: req.params.id})
-        //  .populate("itineraries")
-        //  .exec((err, user) => {
-        //    if (err) {
-        //      next(err);
-        //      return;
-        //    }
-        //    res.json({user});
-        //  });
+      
 
 module.exports = router;
