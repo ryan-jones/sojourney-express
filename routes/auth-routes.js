@@ -32,7 +32,7 @@ router.post("/login", function(req, res) {
           res.status(401).json({message:"passwords did not match"});
         } else {
         	console.log('user', user);
-          var payload = {id: user._id, user: user.username};
+          var payload = {id: user._id, user: user.username}; //user: user.username
           var token = jwt.sign(payload, jwtOptions.secretOrKey);
           console.log(token)
           res.json({message: "ok", token: token, user: user});
