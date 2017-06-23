@@ -14,6 +14,7 @@ router.post("/login", function(req, res) {
   if(req.body.username && req.body.password){
     var username = req.body.username;
     var password = req.body.password;
+    console.log('var username & password', username & password)
   }
 
   if (username === "" || password === "") {
@@ -23,6 +24,7 @@ router.post("/login", function(req, res) {
 
   User.findOne({ "username": username }, (err, user)=> {
   	if( ! user ){
+      console.log('no user found');
 	    res.status(401).json({message:"no such user found"});
 	  } else {
       bcrypt.compare(password, user.password, function(err, isMatch) {
@@ -56,7 +58,6 @@ router.post("/signup", (req, res, next) => {
 
   User.findOne({ username }, "username", (err, user) => {
     if (user !== null) {
-      alert('User already exists!')
       res.status(400).json({ message: 'user exists' });
       return;
     }
