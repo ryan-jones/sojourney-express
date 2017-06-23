@@ -24,8 +24,8 @@ router.get('/users', (req, res, next) => {
 
 /* GET a single user */
 router.get('/users/:id', (req, res) => {
-  console.log('something', req.body)
   if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    console.log('cannot find user')
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
@@ -33,7 +33,7 @@ router.get('/users/:id', (req, res) => {
   User.findById(req.params.id, (err, theUser) => {
     console.log("inside User")
       if (err) {
-        res.json(err);
+        res.status(400).json(err);
         return;
       }
       User
@@ -41,7 +41,7 @@ router.get('/users/:id', (req, res) => {
        .populate("itineraries")
        .exec((err, user) => {
          if (err) {
-           next(err);
+           res.status(400).json({ message: 'something went wrong' });
            return;
          }
          res.json(user);
@@ -49,33 +49,58 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
-router.post('/users/:id', (req, res, next)=>{
-  let password = req.body.password;
-  console.log('password', password);
-  let salt     = bcrypt.genSaltSync(bcryptSalt);
-  let hashPass = bcrypt.hashSync(password, salt);
+//edit an existing user
+router.put('/users', (req, res, next)=>{
+  console.log('inside of put method');
+  if(!mongoose.Types.ObjectId.isValid(req.body._id)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+  // let password = req.body.password;
+  // console.log('password', password);
+  // let salt     = bcrypt.genSaltSync(bcryptSalt);
+  // let hashPass = bcrypt.hashSync(password, salt);
+  // console.log('hashpass', hashPass);
 
-  User.findById({_id: req.params.id}, (err, user)=>{
-    if (err) {
-				next(err);
-			} else {
-        user.name = req.body.name,
-        user.username = req.body.username,
-        user.password = hashPass,
-        user.nationality1 = req.body.nationality1,
-        user.nationality2 = req.body.nationality2,
-        user.save((err) => {
-		  		if (err) {
-		  			next(err);
-		  		} else {
-            res.json(user);
-          }
-        });
+  const updates = {
+    name: req.body.name,
+    username: req.body.username,
+    password: req.body.password,
+    nationality: req.body.nationality1,
+    nationality2: req.body.nationality2
+    };
+
+    User.findByIdAndUpdate(req.body._id, updates, (err, user) => {
+
+      bcrypt.compare(updates.password, user.password, function(err, isMatch) {
+        console.log(isMatch);
+        if (!isMatch) {
+          let password = req.body.password;
+          console.log('password', password);
+          let salt     = bcrypt.genSaltSync(bcryptSalt);
+          let hashPass = bcrypt.hashSync(password, salt);
+          updates.password = hashPass;
+          console.log('updates.password', updates.password)
+        } else {
+          updates.password = user.password
+          console.log('updates.password = user.password', updates.password);
+        }
+      });
+      console.log('updates.password', updates.password);
+      if (err) {
+        console.warn('xhr.responseText', xhr.responseText);
+        console.log("error");
+        next(err);
+      } else {
+        console.log('userrrrrrr -> ', user);
+
+        res.status(200).json(user);
       }
 
-  });
+    });
 })
-/* CREATE a new user visa schedule. */
+
+/* CREATE a new user. */
 router.post('/users', (req, res, next) => {
 
   const theUser = new User({
@@ -84,7 +109,8 @@ router.post('/users', (req, res, next) => {
     password: req.body.password,
     places_visited: req.body.places_visited,
     itineraries: req.body.itineraries,
-    nationality: req.body.nationality,
+    nationality: req.body.nationality1,
+    nationality2: req.body.nationality2,
   });
 
   theUser.save((err) => {

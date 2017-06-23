@@ -10,7 +10,7 @@ const bcrypt     = require('bcrypt');
 const bcryptSalt = 10;
 
 router.post("/login", function(req, res) {
-  console.log(req.body);
+  console.log('req.body', req.body);
   if(req.body.username && req.body.password){
     var username = req.body.username;
     var password = req.body.password;
@@ -22,14 +22,13 @@ router.post("/login", function(req, res) {
   }
 
   User.findOne({ "username": username }, (err, user)=> {
-
   	if( ! user ){
 	    res.status(401).json({message:"no such user found"});
 	  } else {
       bcrypt.compare(password, user.password, function(err, isMatch) {
         console.log(isMatch);
         if (!isMatch) {
-          res.status(401).json({message:"passwords did not match"});
+          res.status(401).json({message:"passwords do not match"});
         } else {
         	console.log('user', user);
           var payload = {id: user._id}; //user: user.username
@@ -57,7 +56,8 @@ router.post("/signup", (req, res, next) => {
 
   User.findOne({ username }, "username", (err, user) => {
     if (user !== null) {
-      res.status(400).json({ message: 'user exist' });
+      alert('User already exists!')
+      res.status(400).json({ message: 'user exists' });
       return;
     }
 
