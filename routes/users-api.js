@@ -74,7 +74,7 @@ router.put('/users', (req, res, next)=>{
 
       bcrypt.compare(updates.password, user.password, function(err, isMatch) {
         console.log(isMatch);
-        if (!isMatch) {
+        if (!isMatch && updates.password !== null && updates.password !== undefined) {
           let password = req.body.password;
           console.log('password', password);
           let salt     = bcrypt.genSaltSync(bcryptSalt);

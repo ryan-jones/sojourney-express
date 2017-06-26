@@ -81,6 +81,7 @@ router.post("/signup", (req, res, next) => {
 
         var token = jwt.sign(payload, jwtOptions.secretOrKey);
         res.status(200).json({message: "ok", token: token, user: user});
+        
       	// res.status(200).json(user);
       }
     });
