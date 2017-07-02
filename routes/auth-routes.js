@@ -9,12 +9,14 @@ const User       = require('../models/user');
 const bcrypt     = require('bcrypt');
 const bcryptSalt = 10;
 
+
+//login a user
 router.post("/login", function(req, res) {
   console.log('req.body', req.body);
   if(req.body.username && req.body.password){
     var username = req.body.username;
     var password = req.body.password;
-    console.log('var username & password', username & password)
+    console.log('var username & password', username, password)
   }
 
   if (username === "" || password === "") {
@@ -28,14 +30,15 @@ router.post("/login", function(req, res) {
 	    res.status(401).json({message:"no such user found"});
 	  } else {
       bcrypt.compare(password, user.password, function(err, isMatch) {
-        console.log(isMatch);
+        console.log('password and user.password', password, user.password)
+        console.log('isMatch1', isMatch);
         if (!isMatch) {
           res.status(401).json({message:"passwords do not match"});
         } else {
         	console.log('user', user);
           var payload = {id: user._id}; //user: user.username
           var token = jwt.sign(payload, jwtOptions.secretOrKey);
-          console.log(token)
+          console.log('token',token)
           res.json({message: "ok", token: token, user: user});
         }
       });
@@ -81,7 +84,7 @@ router.post("/signup", (req, res, next) => {
 
         var token = jwt.sign(payload, jwtOptions.secretOrKey);
         res.status(200).json({message: "ok", token: token, user: user});
-        
+
       	// res.status(200).json(user);
       }
     });

@@ -56,48 +56,63 @@ router.put('/users', (req, res, next)=>{
       res.status(400).json({ message: 'Specified id is not valid' });
       return;
     }
-  // let password = req.body.password;
-  // console.log('password', password);
-  // let salt     = bcrypt.genSaltSync(bcryptSalt);
-  // let hashPass = bcrypt.hashSync(password, salt);
-  // console.log('hashpass', hashPass);
 
-  const updates = {
-    name: req.body.name,
-    username: req.body.username,
-    password: req.body.password,
-    nationality: req.body.nationality1,
-    nationality2: req.body.nationality2
-    };
 
-    User.findByIdAndUpdate(req.body._id, updates, (err, user) => {
-
-      bcrypt.compare(updates.password, user.password, function(err, isMatch) {
-        console.log(isMatch);
-        if (!isMatch && updates.password !== null && updates.password !== undefined) {
-          let password = req.body.password;
-          console.log('password', password);
-          let salt     = bcrypt.genSaltSync(bcryptSalt);
-          let hashPass = bcrypt.hashSync(password, salt);
-          updates.password = hashPass;
-          console.log('updates.password', updates.password)
-        } else {
-          updates.password = user.password
-          console.log('updates.password = user.password', updates.password);
-        }
-      });
-      console.log('updates.password', updates.password);
-      if (err) {
-        console.warn('xhr.responseText', xhr.responseText);
-        console.log("error");
-        next(err);
+  User.findById(req.body._id, (err, user)=>{
+    let updates = {
+      name: req.body.name,
+      username: req.body.username,
+      nationality: req.body.nationality1,
+      password: '',
+      nationality2: req.body.nationality2,
+    }
+    bcrypt.compare(req.body.password, user.password, function(err, isMatch) {
+      console.log('isMatch', isMatch, updates.password, user.password);
+      if (!isMatch && req.body.password !== null && req.body.password !== undefined) {
+        let password = req.body.password;
+        console.log('password', password);
+        let salt     = bcrypt.genSaltSync(bcryptSalt);
+        let hashPass = bcrypt.hashSync(password, salt);
+        updates.password = hashPass;
+        console.log('updates.password1', updates.password)
       } else {
-        console.log('userrrrrrr -> ', user);
-
-        res.status(200).json(user);
+        updates.password = user.password;
+        console.log('updates.password', updates.password)
       }
+      User.findByIdAndUpdate(req.body._id, updates, (err, user) => {
+        console.log('updates in update', updates);
+        // bcrypt.compare(req.body.password, user.password, function(err, isMatch) {
+        //   console.log('isMatch', isMatch, updates.password, user.password);
+        //   if (!isMatch && req.body.password !== null && req.body.password !== undefined) {
+        //     let password = req.body.password;
+        //     console.log('password', password);
+        //     let salt     = bcrypt.genSaltSync(bcryptSalt);
+        //     let hashPass = bcrypt.hashSync(password, salt);
+        //     updates.password = hashPass;
+        //     console.log('updates.password1', updates.password)
+        //   } else {
+        //     updates.password = user.password;
+        //     console.log('updates.password', updates.password)
+        //   }
+        // });
 
-    });
+          if (err) {
+            console.log("error");
+            next(err);
+          } else {
+            user = updates;
+            console.log('userrrrrrr -> ', user);
+
+            res.status(200).json(user);
+          }
+
+      });
+    });  
+  })
+
+
+
+
 })
 
 /* CREATE a new user. */
