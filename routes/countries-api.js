@@ -1,7 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const mongoose = require('mongoose');
-
 const Country = require('../models/country');
 
 
@@ -19,19 +18,16 @@ router.get('/countries', (req, res, next) => {
 
 /* GET a single country */
 router.get('/countries/:id', (req, res) => {
-  console.log('something', req.params.id)
   if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
 
   Country.findById(req.params.id, (err, theCountry) => {
-    console.log("inside Country")
       if (err) {
         res.json(err);
         return;
       }
-
       res.json(theCountry);
     });
 });

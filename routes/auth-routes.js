@@ -1,74 +1,67 @@
-const express    = require('express');
-var router = express.Router();
-var jwt = require('jsonwebtoken');
-var jwtOptions = require('../config/jwtOptions');
-const passport   = require('passport');
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const jwtOptions = require('../config/jwtOptions');
+const passport = require('passport');
 // Our user model
-const User       = require('../models/user');
+const User = require('../models/user');
 
-const bcrypt     = require('bcrypt');
+const bcrypt = require('bcrypt');
 const bcryptSalt = 10;
 
-
 //login a user
-router.post("/login", function(req, res) {
-  console.log('req.body', req.body);
-  if(req.body.username && req.body.password){
-    var username = req.body.username;
-    var password = req.body.password;
-    console.log('var username & password', username, password)
+router.post('/login', function(req, res) {
+  if (req.body.username && req.body.password) {
+    const username = req.body.username;
+    const password = req.body.password;
   }
 
-  if (username === "" || password === "") {
-    res.status(401).json({message:"fill up the fields"});
+  if (!username || !password) {
+    res.status(401).json({ message: 'fill up the fields' });
     return;
   }
 
-  User.findOne({ "username": username }, (err, user)=> {
-  	if( ! user ){
-      console.log('no user found');
-	    res.status(401).json({message:"no such user found"});
-	  } else {
+  User.findOne({ username: username }, (err, user) => {
+    if (!user) {
+      res.status(401).json({ message: 'no such user found' });
+    } else {
       bcrypt.compare(password, user.password, function(err, isMatch) {
-        console.log('password and user.password', password, user.password)
-        console.log('isMatch1', isMatch);
         if (!isMatch) {
-          res.status(401).json({message:"passwords do not match"});
+          res.status(401).json({ message: 'passwords do not match' });
         } else {
-        	console.log('user', user);
-          var payload = {id: user._id}; //user: user.username
-          var token = jwt.sign(payload, jwtOptions.secretOrKey);
-          console.log('token',token)
-          res.json({message: "ok", token: token, user: user});
+          const payload = { id: user._id }; //user: user.username
+          const token = jwt.sign(payload, jwtOptions.secretOrKey);
+          res.json({ message: 'ok', token: token, user: user });
         }
       });
     }
-  })
+  });
 });
 
-router.post("/signup", (req, res, next) => {
-  var name = req.body.name;
-  var username = req.body.username;
-  var password = req.body.password;
-  var nationality = req.body.nationality;
-  var nationality2 = req.body.nationality2
-
+router.post('/signup', (req, res, next) => {
+  const name = req.body.name;
+  const username = req.body.username;
+  const password = req.body.password;
+  const nationality = req.body.nationality;
+  const nationality2 = req.body.nationality2;
 
   if (!username || !password || !nationality) {
-    res.status(400).json({ message: "Provide username, password, and nationality" });
+    res
+      .status(400)
+      .json({ message: 'Provide username, password, and nationality' });
     return;
   }
 
-  User.findOne({ username }, "username", (err, user) => {
-    if (user !== null) {
+  User.findOne({ username }, 'username', (err, user) => {
+    if (user) {
       res.status(400).json({ message: 'user exists' });
       return;
     }
 
-    var salt     = bcrypt.genSaltSync(bcryptSalt);
-    var hashPass = bcrypt.hashSync(password, salt);
+    const salt = bcrypt.genSaltSync(bcryptSalt);
+    const hashPass = bcrypt.hashSync(password, salt);
 
-    var newUser = User({
+    const newUser = User({
       name,
       username,
       password: hashPass,
@@ -80,17 +73,15 @@ router.post("/signup", (req, res, next) => {
       if (err) {
         res.status(400).json({ message: err });
       } else {
-        var payload = {id: user._id, user: user.username};
+        const payload = { id: user._id, user: user.username };
 
-        var token = jwt.sign(payload, jwtOptions.secretOrKey);
-        res.status(200).json({message: "ok", token: token, user: user});
+        const token = jwt.sign(payload, jwtOptions.secretOrKey);
+        res.status(200).json({ message: 'ok', token: token, user: user });
 
-      	// res.status(200).json(user);
+        // res.status(200).json(user);
       }
     });
   });
 });
-
-
 
 module.exports = router;

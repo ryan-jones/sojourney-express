@@ -1,10 +1,9 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const itinerarySchema = new Schema({
   name: String,
-  nationality1: String,
-  nationality2: String,
+  nationalities: string[],
   placesAndDates: {
     type: Array,
     default: []
