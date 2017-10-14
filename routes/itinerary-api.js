@@ -14,15 +14,13 @@ router.post('/itinerary', (req, res, next) => {
   const name = req.body.name;
   const flightPaths = req.body.flightPaths;
   const placesAndDates = req.body.placesAndDates;
-  const nationality1 = req.body.nationality1;
-  const nationality2 = req.body.nationality2;
+  const nationalities = req.body.nationalities;
 
   const newItinerary = Itinerary({
-    name: name,
-    userId: userId,
-    nationality1: nationality1,
-    nationality2: nationality2,
-    placesAndDates: placesAndDates
+    name,
+    userId,
+    nationalities,
+    placesAndDates
   });
 
   newItinerary.save((err, itinerary) => {
@@ -35,9 +33,9 @@ router.post('/itinerary', (req, res, next) => {
         (err, user) => {
           if (err) {
             res.json(err);
-            return;
+          } else {
+            res.json(user);
           }
-          res.json(user);
         }
       );
     }

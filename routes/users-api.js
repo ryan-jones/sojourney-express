@@ -4,20 +4,18 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
-// const passport = require("../helpers/passport");
 const bcryptSalt = 10;
-// const auth = require('../helpers/auth');
 const flash = require('connect-flash');
 
 /* Get all users*/
 
-router.get('/users', (req, res, next) => {
+router.get('/users', (req, res) => {
   User.find((err, userList) => {
     if (err) {
       res.json(err);
-      return;
+    } else {
+      res.json(userList);
     }
-    res.json(userList);
   });
 });
 
@@ -25,31 +23,23 @@ router.get('/users', (req, res, next) => {
 router.get('/users/:id', (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });
-    return;
   }
 
-  User.findById(req.params.id, (err, theUser) => {
-    if (err) {
-      res.status(400).json(err);
-      return;
-    }
-    User.findById(req.params.id)
-      .populate('itineraries')
-      .exec((err, user) => {
-        if (err) {
-          res.status(400).json({ message: 'something went wrong' });
-          return;
-        }
+  User.findById(req.params.id)
+    .populate('itineraries')
+    .exec((err, user) => {
+      if (err) {
+        res.status(400).json({ message: 'something went wrong' });
+      } else {
         res.json(user);
-      });
-  });
+      }
+    });
 });
 
 //edit an existing user
 router.put('/users', (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.body._id)) {
     res.status(400).json({ message: 'Specified id is not valid' });
-    return;
   }
 
   User.findById(req.body._id, (err, user) => {
@@ -61,11 +51,7 @@ router.put('/users', (req, res, next) => {
       nationality2: req.body.nationality2
     };
     bcrypt.compare(req.body.password, user.password, function(err, isMatch) {
-      if (
-        !isMatch &&
-        req.body.password !== null &&
-        req.body.password !== undefined
-      ) {
+      if (!isMatch && !req.body.password) {
         let password = req.body.password;
         let salt = bcrypt.genSaltSync(bcryptSalt);
         let hashPass = bcrypt.hashSync(password, salt);
@@ -106,7 +92,7 @@ router.post('/users', (req, res, next) => {
     name: req.body.name,
     username: req.body.username,
     password: req.body.password,
-    places_visited: req.body.places_visited,
+    placesVisited: req.body.placesVisited,
     itineraries: req.body.itineraries,
     nationalities: req.body.nationalities
   });
@@ -114,11 +100,11 @@ router.post('/users', (req, res, next) => {
   theUser.save(err => {
     if (err) {
       res.json(err);
-      return;
+    } else {
+      res.json({
+        id: theUser._id
+      });
     }
-    res.json({
-      id: theUser._id
-    });
   });
 });
 

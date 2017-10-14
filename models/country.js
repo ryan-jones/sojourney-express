@@ -1,9 +1,10 @@
+'use strict';
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const countrySchema = new Schema({
-  name: String,
-  countryCode: String,
+  name: {type: String, required: true},
+  countryCode: {type: String, required: true},
   visaFree: {
     type: [String],
     default: []

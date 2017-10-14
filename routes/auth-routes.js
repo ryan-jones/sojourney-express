@@ -11,27 +11,25 @@ const bcryptSalt = 10;
 
 //login a user
 router.post('/login', function(req, res) {
-  if (req.body.username && req.body.password) {
-    const username = req.body.username;
-    const password = req.body.password;
+  if (!req.body.username && !req.body.password) {
+    return res.status(401).json({ message: 'fill up the fields' });
   }
-
-  if (!username || !password) {
-    res.status(401).json({ message: 'fill up the fields' });
-    return;
-  }
+  const username = req.body.username;
+  const password = req.body.password;
 
   User.findOne({ username: username }, (err, user) => {
     if (!user) {
-      res.status(401).json({ message: 'no such user found' });
+      return res.status(401).json({ message: 'no such user found' });
     } else {
-      bcrypt.compare(password, user.password, function(err, isMatch) {
+      return bcrypt.compare(password, user.password, function(err, isMatch) {
         if (!isMatch) {
-          res.status(401).json({ message: 'passwords do not match' });
+          return res.status(401).json({ message: 'passwords do not match' });
         } else {
-          const payload = { id: user._id }; //user: user.username
+          const payload = { id: user._id };
           const token = jwt.sign(payload, jwtOptions.secretOrKey);
-          res.json({ message: 'ok', token: token, user: user });
+          const response = { message: 'ok', token: token, user: user };
+          console.log('response', response);
+          return res.status(200).json(response);
         }
       });
     }
@@ -42,20 +40,17 @@ router.post('/signup', (req, res, next) => {
   const name = req.body.name;
   const username = req.body.username;
   const password = req.body.password;
-  const nationality = req.body.nationality;
-  const nationality2 = req.body.nationality2;
+  const nationalities = req.body.nationalities;
 
-  if (!username || !password || !nationality) {
-    res
+  if (!username || !password || !nationalities) {
+    return res
       .status(400)
       .json({ message: 'Provide username, password, and nationality' });
-    return;
   }
 
   User.findOne({ username }, 'username', (err, user) => {
     if (user) {
-      res.status(400).json({ message: 'user exists' });
-      return;
+      return res.status(400).json({ message: 'user exists' });
     }
 
     const salt = bcrypt.genSaltSync(bcryptSalt);
@@ -65,20 +60,18 @@ router.post('/signup', (req, res, next) => {
       name,
       username,
       password: hashPass,
-      nationality,
-      nationality2
+      nationalities
     });
 
     newUser.save((err, user) => {
       if (err) {
-        res.status(400).json({ message: err });
+        return res.status(400).json({ message: err });
       } else {
         const payload = { id: user._id, user: user.username };
-
         const token = jwt.sign(payload, jwtOptions.secretOrKey);
-        res.status(200).json({ message: 'ok', token: token, user: user });
-
-        // res.status(200).json(user);
+        return res
+          .status(200)
+          .json({ message: 'ok', token: token, user: user });
       }
     });
   });
