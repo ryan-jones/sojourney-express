@@ -1,19 +1,20 @@
-var mongoose = require('mongoose');
+'use strict';
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const countrySchema = new Schema({
-  name: String,
-  countryCode: String,
+  name: {type: String, required: true},
+  countryCode: {type: String, required: true},
   visaFree: {
-    type: Array,
+    type: [String],
     default: []
   },
   visaOnArrival: {
-    type: Array,
+    type: [String],
     default: []
   },
   bannedFrom: {
-    type: Array,
+    type: [String],
     default: []
   }
 });

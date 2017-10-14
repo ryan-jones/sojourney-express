@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Country = require('../models/country');
 
-mongoose.connect(process.env.MONGODB_URI);
+// mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect('mongodb://localhost:27017/country-list')
 
 let countries = [
   {
@@ -338,9 +339,3 @@ Country.create(countries, (err, docs)=> {
 mongoose.connection.close();
 
 });
-
-// User.create(users, (err, docs)=> {
-//  if(err) { throw err}
-//  docs.forEach((user) => {
-//    console.log(user.name);
-// });

@@ -1,96 +1,80 @@
-const express    = require('express');
-var router = express.Router();
-var jwt = require('jsonwebtoken');
-var jwtOptions = require('../config/jwtOptions');
-const passport   = require('passport');
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const jwtOptions = require('../config/jwtOptions');
+const passport = require('passport');
 // Our user model
-const User       = require('../models/user');
+const User = require('../models/user');
 
-const bcrypt     = require('bcrypt');
+const bcrypt = require('bcrypt');
 const bcryptSalt = 10;
 
-
 //login a user
-router.post("/login", function(req, res) {
-  console.log('req.body', req.body);
-  if(req.body.username && req.body.password){
-    var username = req.body.username;
-    var password = req.body.password;
-    console.log('var username & password', username, password)
+router.post('/login', function(req, res) {
+  if (!req.body.username && !req.body.password) {
+    return res.status(401).json({ message: 'fill up the fields' });
   }
+  const username = req.body.username;
+  const password = req.body.password;
 
-  if (username === "" || password === "") {
-    res.status(401).json({message:"fill up the fields"});
-    return;
-  }
-
-  User.findOne({ "username": username }, (err, user)=> {
-  	if( ! user ){
-      console.log('no user found');
-	    res.status(401).json({message:"no such user found"});
-	  } else {
-      bcrypt.compare(password, user.password, function(err, isMatch) {
-        console.log('password and user.password', password, user.password)
-        console.log('isMatch1', isMatch);
+  User.findOne({ username: username }, (err, user) => {
+    if (!user) {
+      return res.status(401).json({ message: 'no such user found' });
+    } else {
+      return bcrypt.compare(password, user.password, function(err, isMatch) {
         if (!isMatch) {
-          res.status(401).json({message:"passwords do not match"});
+          return res.status(401).json({ message: 'passwords do not match' });
         } else {
-        	console.log('user', user);
-          var payload = {id: user._id}; //user: user.username
-          var token = jwt.sign(payload, jwtOptions.secretOrKey);
-          console.log('token',token)
-          res.json({message: "ok", token: token, user: user});
+          const payload = { id: user._id };
+          const token = jwt.sign(payload, jwtOptions.secretOrKey);
+          const response = { message: 'ok', token: token, user: user };
+          return res.status(200).json(response);
         }
       });
     }
-  })
+  });
 });
 
-router.post("/signup", (req, res, next) => {
-  var name = req.body.name;
-  var username = req.body.username;
-  var password = req.body.password;
-  var nationality = req.body.nationality;
-  var nationality2 = req.body.nationality2
+router.post('/signup', (req, res, next) => {
+  const name = req.body.name;
+  const username = req.body.username;
+  const password = req.body.password;
+  const nationalities = req.body.nationalities;
 
-
-  if (!username || !password || !nationality) {
-    res.status(400).json({ message: "Provide username, password, and nationality" });
-    return;
+  if (!username || !password || !nationalities) {
+    return res
+      .status(400)
+      .json({ message: 'Provide username, password, and nationality' });
   }
 
-  User.findOne({ username }, "username", (err, user) => {
-    if (user !== null) {
-      res.status(400).json({ message: 'user exists' });
-      return;
+  User.findOne({ username }, 'username', (err, user) => {
+    if (user) {
+      return res.status(400).json({ message: 'user exists' });
     }
 
-    var salt     = bcrypt.genSaltSync(bcryptSalt);
-    var hashPass = bcrypt.hashSync(password, salt);
+    const salt = bcrypt.genSaltSync(bcryptSalt);
+    const hashPass = bcrypt.hashSync(password, salt);
 
-    var newUser = User({
+    const newUser = User({
       name,
       username,
       password: hashPass,
-      nationality,
-      nationality2
+      nationalities
     });
 
     newUser.save((err, user) => {
       if (err) {
-        res.status(400).json({ message: err });
+        return res.status(400).json({ message: err });
       } else {
-        var payload = {id: user._id, user: user.username};
-
-        var token = jwt.sign(payload, jwtOptions.secretOrKey);
-        res.status(200).json({message: "ok", token: token, user: user});
-
-      	// res.status(200).json(user);
+        const payload = { id: user._id, user: user.username };
+        const token = jwt.sign(payload, jwtOptions.secretOrKey);
+        const response = { message: 'ok', token: token, user: user };
+        return res
+          .status(200)
+          .json(response);
       }
     });
   });
 });
-
-
 
 module.exports = router;
