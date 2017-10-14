@@ -28,7 +28,6 @@ router.post('/login', function(req, res) {
           const payload = { id: user._id };
           const token = jwt.sign(payload, jwtOptions.secretOrKey);
           const response = { message: 'ok', token: token, user: user };
-          console.log('response', response);
           return res.status(200).json(response);
         }
       });
@@ -69,9 +68,10 @@ router.post('/signup', (req, res, next) => {
       } else {
         const payload = { id: user._id, user: user.username };
         const token = jwt.sign(payload, jwtOptions.secretOrKey);
+        const response = { message: 'ok', token: token, user: user };
         return res
           .status(200)
-          .json({ message: 'ok', token: token, user: user });
+          .json(response);
       }
     });
   });
