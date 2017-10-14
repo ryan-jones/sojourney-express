@@ -5,15 +5,15 @@ const countrySchema = new Schema({
   name: String,
   countryCode: String,
   visaFree: {
-    type: Array,
+    type: [String],
     default: []
   },
   visaOnArrival: {
-    type: Array,
+    type: [String],
     default: []
   },
   bannedFrom: {
-    type: Array,
+    type: [String],
     default: []
   }
 });

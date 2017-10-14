@@ -2,15 +2,18 @@ var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: string,
-  username: string,
-  password: string,
-  places_visited: {
-    type: Array,
+  name: String,
+  username: String,
+  password: String,
+  placesVisited: {
+    type: [String],
     default: []
   },
   itineraries: [{ type: Schema.Types.ObjectId, ref: 'Itinerary' }],
-  nationalities: string[]
+  nationalities: {
+    type: [String],
+    default: []
+  }
 });
 
 const User = mongoose.model('User', userSchema);

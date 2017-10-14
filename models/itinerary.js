@@ -3,7 +3,10 @@ const Schema = mongoose.Schema;
 
 const itinerarySchema = new Schema({
   name: String,
-  nationalities: string[],
+  nationalities: {
+    type: [String],
+    default: []
+  },
   placesAndDates: {
     type: Array,
     default: []

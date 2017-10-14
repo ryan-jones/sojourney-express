@@ -338,9 +338,3 @@ Country.create(countries, (err, docs)=> {
 mongoose.connection.close();
 
 });
-
-// User.create(users, (err, docs)=> {
-//  if(err) { throw err}
-//  docs.forEach((user) => {
-//    console.log(user.name);
-// });
