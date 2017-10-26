@@ -5,10 +5,6 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const Itinerary = require('../models/itinerary');
 
-// const passport = require("../helpers/passport");
-// const auth = require('../helpers/auth');
-const flash = require('connect-flash');
-
 router.post('/itinerary', (req, res, next) => {
   const userId = req.body.id;
   const name = req.body.name;
@@ -28,8 +24,14 @@ router.post('/itinerary', (req, res, next) => {
       res.status(400).json({ message: err });
     } else {
       User.findByIdAndUpdate(
-        { _id: userId },
-        { $push: { itineraries: itinerary.id } },
+        {
+          _id: userId
+        },
+        {
+          $push: {
+            itineraries: itinerary.id
+          }
+        },
         (err, user) => {
           if (err) {
             res.json(err);

@@ -98,7 +98,6 @@ router.post('/users', (req, res, next) => {
 
 //deletes user from the database
 router.delete('/users/:id', (req, res, next) => {
-  console.log('delete', req.body)
   User.remove({ _id: req.body._id }, function(err, user) {
     if (err) {
       next(err);
