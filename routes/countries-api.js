@@ -12,20 +12,6 @@ router.get('/countries', (req, res, next) => {
   });
 });
 
-/* GET a single country */
-router.get('/countries/:id', (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).json({ message: 'Specified id is not valid' });
-
-  Country.findById(req.params.id, (err, theCountry) => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(theCountry);
-    }
-  });
-});
-
 /* CREATE a new country visa schedule. */
 router.post('/countries', (req, res) => {
   const theCountry = new Country({
