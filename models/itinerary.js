@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const itinerarySchema = new Schema({
-  name: {type: String, required: true},
+  name: { type: String, required: true },
   nationalities: {
     type: [String],
     default: []
@@ -17,8 +17,7 @@ const itinerarySchema = new Schema({
     type: Array,
     default: []
   },
-  userId: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-
+  userId: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const Itinerary = mongoose.model('Itinerary', itinerarySchema);

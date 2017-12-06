@@ -16,6 +16,7 @@ const usersApi = require('./routes/users-api');
 const authRoutes = require('./routes/auth-routes');
 const itinerariesApi = require('./routes/itinerary-api');
 
+
 const corsOptions = { credentials: true, origin: 'http://localhost:4200' };
 
 require('./config/database');
@@ -33,7 +34,6 @@ app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(passport.initialize());
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 //parses http headers
@@ -42,9 +42,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', authRoutes);
-app.use('/api', countriesApi);
-app.use('/api', usersApi);
-app.use('/api', itinerariesApi);
+app.use('/api/countries', countriesApi);
+app.use('/api/users', usersApi);
+app.use('/api/itinerary', itinerariesApi);
 
 // This will be the default route is nothing else is caught
 app.use(function(req, res) {
