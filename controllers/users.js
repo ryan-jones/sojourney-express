@@ -44,11 +44,11 @@ function setPassword(req, user) {
 }
 
 function editUser(req, res) {
-  User.findById(req.body._id, (err, user) => {
+  User.findById(req.params.id, (err, user) => {
     if (user) {
       updateUser(req);
     } else {
-      if (err) return res.json(err);
+      return res.json(err);
     }
   });
 }
@@ -60,7 +60,7 @@ function updateUser(req, res) {
     nationalities: req.body.nationalities,
     password: setPassword(req, user)
   };
-  User.findByIdAndUpdate(req.body._id, updates, (err, user) => {
+  User.findByIdAndUpdate(req.params.id, updates, (err, user) => {
     if (err) {
       next(err);
     } else {
@@ -91,15 +91,13 @@ function createUser(req, res, next) {
     if (err) {
       res.json(err);
     } else {
-      res.json({
-        id: theUser._id
-      });
+      res.json(theUser);
     }
   });
 }
 
 function deleteUser(req, res, next) {
-  User.remove({ _id: req.body._id }, (err, user) => {
+  User.remove({ _id: req.params.id }, (err, user) => {
     if (err) {
       next(err);
     } else {

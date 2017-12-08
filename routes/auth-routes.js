@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const m = require('_/middlewares');
-const ctrl = require('./controllers');
+const m = require('../middlewares');
+const ctrl = require('../controllers');
 // let tokenCheck = [m.jwt.exist, m.jwt.verify];
 
 

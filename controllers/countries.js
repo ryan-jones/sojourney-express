@@ -1,6 +1,7 @@
 const Country = require('../models/country');
 
 exports.getCountries = getCountries;
+exports.createCountryList = createCountryList;
 
 function getCountries(req, res) {
   Country.find((err, countryList) => {
@@ -20,12 +21,11 @@ function createCountryList(req, res) {
   });
 
   theCountry.save(err => {
+    console.log('err&&&&', err)
     if (err) {
       res.json(err);
     } else {
-      res.json({
-        id: theCountry._id
-      });
+      res.json(theCountry);
     }
   });
 }

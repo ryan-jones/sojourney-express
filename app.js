@@ -10,7 +10,6 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-const index = require('./routes/index');
 const countriesApi = require('./routes/countries-api');
 const usersApi = require('./routes/users-api');
 const authRoutes = require('./routes/auth-routes');
